@@ -34,7 +34,18 @@ sample_per_class = 50 # 200 #  200
 deep_input_size = 32
 num_neighbors = 3
 show_image = True # False
-base_name = f"{dataset}_{high_score}_{low_score}_sample_per_class_{sample_per_class}_num_neighbors_{num_neighbors}"
+search_index = 2
+min_index_num = 2
+
+
+train = pd.read_csv('train.csv') # train
+train.head()
+# print(train.shape[0])
+label = train["label"]
+num_class = len(label.value_counts())
+whole_num_sample = num_class * sample_per_class 
+shape = int(sqrt(train.iloc[index1].values[1:].shape[0] )  )
+base_name = f"{dataset}_{high_score}_{low_score}_sample_{whole_num_sample}_num_neighbors_{num_neighbors}"
 filename = base_name+ ".csv"
 home_dir =  os.environ['HOME']
 print(home_dir)
@@ -47,17 +58,7 @@ if not os.path.exists(save_img_path) and not show_image:
 
 
 
-search_index = 2
-min_index_num = 2
 
-
-train = pd.read_csv('train.csv') # train
-train.head()
-# print(train.shape[0])
-label = train["label"]
-num_class = len(label.value_counts())
-whole_num_sample = num_class * sample_per_class 
-shape = int(sqrt(train.iloc[index1].values[1:].shape[0] )  )
 
 
 def ssim(img_org, img1, scale):
