@@ -1,8 +1,19 @@
 
-for low_score in 'UMAP' 'TSNE'
+for low_score in UMAP TSNE
 do
     {
-        echo ${low_score}
-        python -W ignore tsne_ssim.py --low_score ${low_score}
+        for dataset in mnist cifar
+        do
+            {
+                for sample_per_class in 1 10 50
+                do
+                    {
+                        # echo ${low_score}
+                        python -W ignore tsne_ssim.py --low_score $low_score --dataset $dataset --sample_per_class $sample_per_class
+                        
+                    }
+
+            } &
+        
     } &
 done
