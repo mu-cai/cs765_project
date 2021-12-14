@@ -269,7 +269,7 @@ with open(filename, 'w') as csvfile:
     csvwriter.writerows(all_csv_content)
 
 data = pd.read_csv(filename)
-for i in range(1,len(data)):
+for i in range(len(data)):
     for j in data.columns[1:]:
         data[j][i] = data[j][i][1:-1]
 data.to_csv(filename)
