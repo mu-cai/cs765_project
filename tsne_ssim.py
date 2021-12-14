@@ -19,7 +19,7 @@ use_cuda = torch.cuda.is_available()
 
 
 
-dataset='mnist' # mnist cifar
+dataset='cifar' # mnist cifar
 high_score = 'SSIM'
 low_score = 'UMAP' # TSNE
 
@@ -31,7 +31,7 @@ if high_score == 'LPIPS':
 index1 = 1
 index2 = 2
 scale = 255
-sample_per_class = 50 # 200 #  200
+sample_per_class = 1 # 200 #  200
 deep_input_size = 32
 num_neighbors = 3
 show_image = False #  True # False
