@@ -33,7 +33,7 @@ base_name = f"mnist_sample_per_class_{sample_per_class}_num_neighbors_{num_neigh
 filename = base_name+ ".csv"
 
 save_img_path = f'~/public/html-s/cs765/{base_name}'
-if not os.path.exist(save_img_path):
+if not os.path.exists(save_img_path):
     os.makedirs(save_img_path, exist_ok=True)
 
 
