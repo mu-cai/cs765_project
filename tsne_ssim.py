@@ -19,7 +19,7 @@ use_cuda = torch.cuda.is_available()
 
 
 
-dataset='cifar' # mnist cifar
+dataset='mnist' # mnist cifar
 high_score = 'SSIM'
 low_score = 'TSNE' # TSNE UMAP
 
