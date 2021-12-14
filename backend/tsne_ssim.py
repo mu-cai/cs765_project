@@ -96,7 +96,7 @@ def return_img(train,search_index, shape, show = False, save = False):
         plt.colorbar()
         plt.show()
     if save:
-        plt.imsave(os.path.join( save_img_path,  f'{search_index}.jpg', img1)
+        plt.imsave(os.path.join( save_img_path,  f'{search_index}.jpg'), img1)
     return img1
 
 def min_distance(train, index, metric = 'LPIPS', mse_list =None, tsne_res = None):
@@ -184,6 +184,7 @@ tsne_res = tsne.fit_transform(train)
 all_csv_content = []
 for i in range(whole_num_sample):
     print('##############',i ,  '##############')
+    return_img(train_df,i, shape, show = False, save = True)
     min_distance_index_ssim, min_distance_value_ssim = min_distance(train_df, index=i, metric = 'SSIM')
     # show_all_imgs(train, min_distance_tsne, shape, show = show_image)
     # print("min_distance: ", min_distance_tsne)
