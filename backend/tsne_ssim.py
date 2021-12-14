@@ -34,7 +34,10 @@ filename = base_name+ ".csv"
 
 save_img_path = f'~/public/html-s/cs765/{base_name}'
 if not os.path.exists(save_img_path):
-    os.makedirs(save_img_path, exist_ok=True)
+    os.mkdir(save_img_path, exist_ok=True)
+    # os.makedirs(save_img_path, exist_ok=True)
+
+
 
 
 
