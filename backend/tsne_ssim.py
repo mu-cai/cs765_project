@@ -33,7 +33,8 @@ scale = 255
 sample_per_class = 50 # 200 #  200
 deep_input_size = 32
 num_neighbors = 3
-show_image = True # False
+show_image = False #  True # False
+save_image_to_dir = True
 search_index = 2
 min_index_num = 2
 
@@ -203,12 +204,12 @@ elif low_score == 'UMAP':
 all_csv_content = []
 for i in range(whole_num_sample):
     print('##############',i ,  '##############')
-    # _ = return_img(train_df,i, shape, show = False, save = True)
+    _ = return_img(train_df,i, shape, show = False, save = save_image_to_dir)
     min_distance_index_ssim, min_distance_value_ssim = min_distance(train_df, index=i, metric = high_score)
-    show_all_imgs(train_df, min_distance_index_ssim, shape, show = show_image)
+    # show_all_imgs(train_df, min_distance_index_ssim, shape, show = show_image)
     # print("min_distance: ", min_distance_tsne)
     min_distance_index_tsne, min_distance_value_tsne = min_distance(train_df, index=i, metric = 'general', tsne_res = tsne_res)
-    show_all_imgs(train_df, min_distance_index_tsne, shape, show = show_image)
+    # show_all_imgs(train_df, min_distance_index_tsne, shape, show = show_image)
     # print("min_distance: TSNE", min_distance_tsne)
     content = [i, min_distance_index_ssim, min_distance_value_ssim, min_distance_index_tsne, min_distance_value_tsne]
     all_csv_content.append(content)
