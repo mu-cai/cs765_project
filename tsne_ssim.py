@@ -18,10 +18,21 @@ import csv, os
 use_cuda = torch.cuda.is_available()
 
 
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--high_score', default='SSIM', type=str, help="")
+parser.add_argument('--low_score', default='TSNE', type=str, help="")
+parser.add_argument('--dataset', default='mnist', type=str, help="")
+parser.add_argument('--sample_per_class', default=10, type=int, help="")
+parser.add_argument('--num_neighbors', default=3, type=int, help="")
+parser.add_argument('--n_components', default=2, type=int, help="")
+args = parser.parse_args()
 
-dataset='mnist' # mnist cifar
-high_score = 'SSIM'
-low_score = 'TSNE' # TSNE UMAP
+
+
+dataset= args.dataset # 'mnist' # mnist cifar
+high_score = args.high_score #  'SSIM'
+low_score = args.low_score #  'TSNE' # TSNE UMAP
 
 if high_score == 'LPIPS':
     loss_fn_alex = lpips.LPIPS(net='alex') # best forward scores
@@ -31,9 +42,9 @@ if high_score == 'LPIPS':
 index1 = 1
 index2 = 2
 scale = 255
-sample_per_class = 10 # 200 #  200
+sample_per_class = args.sample_per_class # 10 # 200 #  200
 deep_input_size = 32
-num_neighbors = 3
+num_neighbors = args.num_neighbors # 3
 show_image = False #  True # False
 save_image_to_dir = not show_image # True
 search_index = 2
@@ -53,6 +64,7 @@ num_class = len(label.value_counts())
 whole_num_sample = num_class * sample_per_class 
 run_file_num = whole_num_sample if not show_image else 1
 shape = int(sqrt(train.iloc[index1].values[1:].shape[0] /channel_num )  )
+print('Image_width: shape')
 base_name = f"{dataset}_{high_score}_{low_score}_sample_{whole_num_sample}_num_neighbors_{num_neighbors}"
 filename = base_name+ ".csv"
 home_dir =  os.environ['HOME']
@@ -213,11 +225,11 @@ print(train.shape)
 train = StandardScaler().fit_transform(train)
 
 if low_score == 'TSNE':
-    tsne = TSNE(n_components = 2, random_state=0)
+    tsne = TSNE(n_components = args.n_components, random_state=0)
     tsne_res = tsne.fit_transform(train)
 elif low_score == 'UMAP':
     import umap.umap_ as umap
-    reducer = umap.UMAP(random_state=0) # 42
+    reducer = umap.UMAP(n_components= args.n_components , random_state=0) # 42
     tsne_res = reducer.fit_transform(train)
 
 
