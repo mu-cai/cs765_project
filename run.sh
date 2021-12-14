@@ -8,7 +8,6 @@ do
                 for sample_per_class in sample_per_class_list
                 do
                     {
-                        # echo ${low_score}
                         python -W ignore tsne_ssim.py --low_score $low_score --dataset $dataset --sample_per_class $sample_per_class
                     } &
 
