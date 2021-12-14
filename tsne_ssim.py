@@ -31,7 +31,7 @@ if high_score == 'LPIPS':
 index1 = 1
 index2 = 2
 scale = 255
-sample_per_class = 50 # 200 #  200
+sample_per_class = 10 # 200 #  200
 deep_input_size = 32
 num_neighbors = 3
 show_image = False #  True # False
@@ -63,6 +63,13 @@ if not os.path.exists(save_img_path) and not show_image:
     # os.makedirs(save_img_path, exist_ok=True)
 
 
+
+save_similarity_score = True
+if save_similarity_score:
+    sim_high = np.zeros((whole_num_sample, whole_num_sample))
+    sim_high_filename = base_name+ f"_{high_score}_similarity.npy"
+    sim_low = np.zeros((whole_num_sample, whole_num_sample))
+    sim_low_filename = base_name+ f"_{low_score}_similarity.npy"
 
 
 
@@ -150,7 +157,7 @@ def min_distance(train, index, metric = 'LPIPS', mse_list =None, tsne_res = None
         value = mse_list[index]
         min_dis_index_list.append(index)
         min_dis_value_list.append(value)
-    return min_dis_index_list, min_dis_value_list
+    return min_dis_index_list, min_dis_value_list, [x * -1 for x in comp_mse_list ]
 
 def show_all_imgs(train_df, min_dis_index_list, shape, show = False):
     if not show:
@@ -221,16 +228,19 @@ all_csv_content = []
 for i in range(run_file_num):
     print('##############',i ,  '##############')
     _ = return_img(train_df,i, shape, show = False, save = save_image_to_dir)
-    min_distance_index_ssim, min_distance_value_ssim = min_distance(train_df, index=i, metric = high_score)
+    min_distance_index_ssim, min_distance_value_ssim, high_sim_score = min_distance(train_df, index=i, metric = high_score)
     show_all_imgs(train_df, min_distance_index_ssim, shape, show = show_image)
     # print("min_distance: ", min_distance_tsne)
-    min_distance_index_tsne, min_distance_value_tsne = min_distance(train_df, index=i, metric = 'general', tsne_res = tsne_res)
+    min_distance_index_tsne, min_distance_value_tsne, low_sim_score = min_distance(train_df, index=i, metric = 'general', tsne_res = tsne_res)
     show_all_imgs(train_df, min_distance_index_tsne, shape, show = show_image)
     # print("min_distance: TSNE", min_distance_tsne)
     content = [i, min_distance_index_ssim, min_distance_value_ssim, min_distance_index_tsne, min_distance_value_tsne]
+    sim_high[i,:] = high_sim_score
+    sim_low[i,:]  = low_sim_score
     all_csv_content.append(content)
 
-
+np.save(sim_high_filename, high_sim_score)
+np.save(sim_low_filename, low_sim_score)
 
 
     
