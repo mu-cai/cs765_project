@@ -194,7 +194,7 @@ if low_score == 'TSNE':
 elif low_score == 'UMAP':
     import umap.umap_ as umap
     reducer = umap.UMAP(random_state=0) # 42
-    embedding = reducer.fit_transform(train)
+    tsne_res = reducer.fit_transform(train)
 
 
 
