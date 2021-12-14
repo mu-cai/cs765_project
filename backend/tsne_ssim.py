@@ -17,10 +17,15 @@ import csv, os
 use_cuda = torch.cuda.is_available()
 
 
-loss_fn_alex = lpips.LPIPS(net='alex') # best forward scores
-if use_cuda:
-    loss_fn_alex = loss_fn_alex.cuda()
 
+dataset='mnist'
+high_score = 'SSIM'
+low_score = 'TSNE'
+
+if high_score == 'LPIPS':
+    loss_fn_alex = lpips.LPIPS(net='alex') # best forward scores
+    if use_cuda:
+        loss_fn_alex = loss_fn_alex.cuda()
 
 index1 = 1
 index2 = 2
@@ -28,13 +33,13 @@ scale = 255
 sample_per_class = 50 # 200 #  200
 deep_input_size = 32
 num_neighbors = 3
-show_image = False
-base_name = f"mnist_sample_per_class_{sample_per_class}_num_neighbors_{num_neighbors}"
+show_image = True # False
+base_name = f"{dataset}_{high_score}_{low_score}_sample_per_class_{sample_per_class}_num_neighbors_{num_neighbors}"
 filename = base_name+ ".csv"
 home_dir =  os.environ['HOME']
 print(home_dir)
 save_img_path = os.path.join(home_dir, f'public/html-s/cs765/{base_name}')
-if not os.path.exists(save_img_path):
+if not os.path.exists(save_img_path) and not show_image:
     os.mkdir(save_img_path)
     # os.makedirs(save_img_path, exist_ok=True)
 
@@ -175,12 +180,21 @@ img2 = train.iloc[index2].values[1:].reshape(shape, shape)
 ############## SSIM ##############
 # ssim_value = ssim_index(train, index1, index2, shape)
 # print('ssim', ssim_value)
-
-train_df = train
+import copy
+train_df = copy.deepcopy(train) 
+print(train.shape)
+train.drop("label", axis=1, inplace=True)
+print(train.shape)
 train = StandardScaler().fit_transform(train)
 
-tsne = TSNE(n_components = 2, random_state=0)
-tsne_res = tsne.fit_transform(train)
+if low_score == 'TSNE':
+    tsne = TSNE(n_components = 2, random_state=0)
+    tsne_res = tsne.fit_transform(train)
+elif low_score == 'UMAP':
+    import umap.umap_ as umap
+    reducer = umap.UMAP(random_state=0) # 42
+    embedding = reducer.fit_transform(train)
+
 
 
 ############## TSNE_general ##############
@@ -188,12 +202,12 @@ tsne_res = tsne.fit_transform(train)
 all_csv_content = []
 for i in range(whole_num_sample):
     print('##############',i ,  '##############')
-    _ = return_img(train_df,i, shape, show = False, save = True)
-    min_distance_index_ssim, min_distance_value_ssim = min_distance(train_df, index=i, metric = 'SSIM')
-    # show_all_imgs(train, min_distance_tsne, shape, show = show_image)
+    # _ = return_img(train_df,i, shape, show = False, save = True)
+    min_distance_index_ssim, min_distance_value_ssim = min_distance(train_df, index=i, metric = high_score)
+    show_all_imgs(train_df, min_distance_index_ssim, shape, show = show_image)
     # print("min_distance: ", min_distance_tsne)
     min_distance_index_tsne, min_distance_value_tsne = min_distance(train_df, index=i, metric = 'general', tsne_res = tsne_res)
-    # show_all_imgs(train_df, min_distance_tsne, shape, show = show_image)
+    show_all_imgs(train_df, min_distance_index_tsne, shape, show = show_image)
     # print("min_distance: TSNE", min_distance_tsne)
     content = [i, min_distance_index_ssim, min_distance_value_ssim, min_distance_index_tsne, min_distance_value_tsne]
     all_csv_content.append(content)
