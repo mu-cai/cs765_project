@@ -251,6 +251,8 @@ for i in range(run_file_num):
     sim_low[i,:]  = low_sim_score
     all_csv_content.append(content)
 
+print(high_sim_score)
+print(low_sim_score)
 np.save(sim_high_filename, high_sim_score)
 np.save(sim_low_filename, low_sim_score)
 
