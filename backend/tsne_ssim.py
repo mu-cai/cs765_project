@@ -187,7 +187,7 @@ tsne_res = tsne.fit_transform(train)
 all_csv_content = []
 for i in range(whole_num_sample):
     print('##############',i ,  '##############')
-    return_img(train_df,i, shape, show = False, save = True)
+    _ = return_img(train_df,i, shape, show = False, save = True)
     min_distance_index_ssim, min_distance_value_ssim = min_distance(train_df, index=i, metric = 'SSIM')
     # show_all_imgs(train, min_distance_tsne, shape, show = show_image)
     # print("min_distance: ", min_distance_tsne)
