@@ -20,7 +20,7 @@ use_cuda = torch.cuda.is_available()
 
 dataset='mnist'
 high_score = 'SSIM'
-low_score = 'TSNE'
+low_score = 'UMAP' # TSNE
 
 if high_score == 'LPIPS':
     loss_fn_alex = lpips.LPIPS(net='alex') # best forward scores
