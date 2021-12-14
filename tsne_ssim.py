@@ -70,6 +70,7 @@ def reshape_img(train,search_index):
     if channel_num==3:
         img1 =  train.iloc[search_index].values[1:].reshape(channel_num, shape, shape ) 
         img1 = np.transpose(img1, (1, 2, 0))
+        img1 = img1.astype(np.uint8)
     elif channel_num ==1:
         img1 =  train.iloc[search_index].values[1:].reshape( shape, shape ) 
     return img1
