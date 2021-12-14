@@ -256,7 +256,7 @@ print(sim_low)
 np.save(sim_high_filename, high_sim_score)
 np.save(sim_low_filename, low_sim_score)
 
-fields = ['index', 'neighbor_index_list_highdimensional', 'similarity_high', 'neighbor_index_list_lowdimensional', 'similarity_low']
+fields = ['index', 'index_high_nei', 'sim_high', 'index_low_nei', 'sim_low']
 # writing to csv file 
 with open(filename, 'w') as csvfile: 
     # creating a csv writer object 

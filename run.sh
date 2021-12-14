@@ -1,11 +1,11 @@
-
+sample_per_class_list=(1 10 50)
 for low_score in UMAP TSNE
 do
     {
         for dataset in mnist cifar
         do
             {
-                for sample_per_class in 1 10 50
+                for sample_per_class in sample_per_class_list
                 do
                     {
                         # echo ${low_score}
