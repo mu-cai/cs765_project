@@ -268,6 +268,12 @@ with open(filename, 'w') as csvfile:
     # writing the data rows 
     csvwriter.writerows(all_csv_content)
 
+data = pd.read_csv(filename)
+for i in range(1,len(data)):
+    for j in data.columns[1:]:
+        data[j][i] = data[j][i][1:-1]
+data.to_csv(filename)
+
 
 
 # target_embed = tsne_res [search_index]
