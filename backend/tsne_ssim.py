@@ -31,8 +31,9 @@ num_neighbors = 3
 show_image = False
 base_name = f"mnist_sample_per_class_{sample_per_class}_num_neighbors_{num_neighbors}"
 filename = base_name+ ".csv"
-
-save_img_path = f'~/public/html-s/cs765/{base_name}'
+home_dir =  os.environ['HOME']
+print(home_dir)
+save_img_path = os.path.join(home_dir, f'public/html-s/cs765/{base_name}')
 if not os.path.exists(save_img_path):
     os.mkdir(save_img_path)
     # os.makedirs(save_img_path, exist_ok=True)
