@@ -11,13 +11,21 @@ import numpy as np
 np.random.seed(0)
 import lpips
 import torch
+use_cuda = torch.cuda.is_available()
+
+
 loss_fn_alex = lpips.LPIPS(net='alex') # best forward scores
+if use_cuda:
+    loss_fn_alex = loss_fn_alex.cuda()
+
 
 index1 = 1
 index2 = 1
 scale = 255
-sample_per_class = 200 #  200
+sample_per_class = 1 # 200 #  200
 num_neighbors = 10
+
+
 
 
 search_index = 2
@@ -37,6 +45,22 @@ def ssim_index(train, index1, index2, shape):
     # plt.show()
     # print('ssim', ssim(img2, img1, scale))
     return ssim(img2, img1, scale)
+
+def lpips_index(train, index1, index2, shape):
+    img1 =  train.iloc[index1].values[1:].reshape(shape, shape)
+    img2 = train.iloc[index2].values[1:].reshape(shape, shape)
+    img1 =(torch.from_numpy(img1)).unsqueeze(0).unsqueeze(0)
+    img2 =(torch.from_numpy(img2)).unsqueeze(0).unsqueeze(0)
+
+
+    # plt.imshow(img1)
+    # plt.colorbar()
+    # plt.show()
+    # print('ssim', ssim(img2, img1, scale))
+    if use_cuda:
+        img1 = img1.cuda()
+        img2 = img2.cuda()
+    return loss_fn_alex(img0, img1)
 
 
 def return_img(train,search_index, shape, show = False):
@@ -68,6 +92,11 @@ img2 = train.iloc[index2].values[1:].reshape(shape, shape)
 # plt.imshow(img1)
 # plt.colorbar()
 # plt.show()
+
+
+############## LPIPS ##############
+lpips_value = ssim_index(train, index1, index2, shape)
+print('lpips_value:', lpips_value)
 
 
 ############## SSIM ##############
@@ -120,6 +149,9 @@ img = return_img(train_df,min_index, shape, show = False)
 
 img0 = torch.zeros(1,3,64,64) # image should be RGB, IMPORTANT: normalized to [-1,1]
 img1 = torch.zeros(1,3,64,64)
+if use_cuda:
+    img0 = img0.cuda()
+    img1 = img1.cuda()
 d = loss_fn_alex(img0, img1)
 
 
