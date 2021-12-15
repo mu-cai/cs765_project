@@ -252,7 +252,8 @@ for i in range(run_file_num):
     all_csv_content.append(content)
 
 print(sim_high)
-print(sim_low)
+# print(sim_low)
+print('min: ', min(sim_high.reshape(run_file_num*run_file_num)), 'max,', max(sim_high.reshape(run_file_num*run_file_num)) )
 np.save(sim_high_filename, sim_high)
 np.save(sim_low_filename, sim_low)
 
