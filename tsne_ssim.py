@@ -253,8 +253,8 @@ for i in range(run_file_num):
 
 print(sim_high)
 print(sim_low)
-np.save(sim_high_filename, high_sim_score)
-np.save(sim_low_filename, low_sim_score)
+np.save(sim_high_filename, sim_high)
+np.save(sim_low_filename, sim_low)
 
 fields = ['index', 'high_nei', 'high_sim', 'low_nei', 'low_sim']
 # writing to csv file 
