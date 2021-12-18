@@ -32,10 +32,13 @@ parameter combinations for this project.
 ## Frontend Part
 ### Environment and dependencies
 You can directly download our frontend part, and see the frontend layout of our visualization. 
-To be specific, our `frontend` folder already contains the data that is needed to run the data. Therefore, if you only would like to run the front end part,  you don't need to execute the backend part.
+To be specific, our `frontend` folder already contains the data that is needed to run the data, where `mnist` and `cifar` denotes the 
+frontend files for each dataset.
+ Therefore, if you only would like to run the front end part,  you don't need to execute the backend part.
 There are several ways to show the actual front end content.
 1. Place the frontend code under the `html` folder in the server.
 For example, in UW Madison CS servers, move/copy the `frontend` folder into your `~/public/html-s/cs765_project`.
-Then you can access the frontend through  `https://pages.cs.wisc.edu/~cs_user_name/cs765_project/frontend`,
+Then you can access the frontend of `mnist` dataset through  `https://pages.cs.wisc.edu/~cs_user_name/cs765_project/frontend/mnist`, and
+the frontend of `cifar` dataset through  `https://pages.cs.wisc.edu/~cs_user_name/cs765_project/frontend/cifar`,
 where `cs_user_name` is your CS username in UW Madison CS department.
 2. If you would like to run the frontend locally, you can also tools like [`VS Code Live Server Extension`](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) or `python3 -m http.server`
