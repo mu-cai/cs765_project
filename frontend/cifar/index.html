@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <!-- Ignore Favicon -> Solved the warning in console of the browser. -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+    <title>765-Project-MuCai-XufengCai</title>
+
+    <!-- Three.js and Lodash libraries-->
+    <script src='./modules/three.js-r101/three.js'></script>
+    <script src='./modules/lodash/lodash.js'></script>
+
+    <!-- Importing D3 minified versions v3 and v5. -->
+    <script src='./modules/d3v3/d3.min.js'></script>
+    <script src='./modules/d3/d3.min.js'></script>
+    
+    <!-- Importing additional modules such as PCP, annotator, tip, legend, lasso, papaParse, and Jquery. -->
+    <script src='./modules/d3-annotations/d3-annotator.js'></script>
+    <script src="./modules/d3-tip/tip.js"></script>
+    <script src="./modules/d3-legend/d3-legend.min.js"></script>
+    <script src="./modules/d3-lasso/lasso.js"></script>
+    <script src="./modules/plotly/plotly_min.js"></script>
+    <script src="./modules/pcp/d3v3.parcoords.js"></script>
+    
+    <script src="./modules/papa/papaparse.min.js"></script>
+    <script src="./modules/jquery/jquery.min.js"></script>
+
+    <!-- Basic scripts that we execute. -->
+    <script src="./js/data_form_handler.js"></script>
+     <script src="./modules/pca/pca.js"></script>
+
+    <!-- CSS - Styling -->
+    <link rel="stylesheet" href="./css/w3.css">
+    <link rel="stylesheet" href="./css/style.css"/>
+    <link rel="stylesheet" href="./css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="./css/d3.parcoords.css">
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.0/css/all.css" integrity="sha384-Mmxa0mLqhmOeaE8vgOSbKacftZcsNYDjQzuCOm6D02luYSzBG8vpaOykv9lFQ51Y" crossorigin="anonymous">
+    <!-- Bootstrap -->
+
+    <script src="./modules/popper/popper.min.js"></script>
+    <script src="./modules/bootstrap/bootstrap.min.js"></script>
+  
+  </head>
+
+  <style>
+
+    .node circle {
+      stroke: white;
+      stroke-width: 1.5px;
+      opacity: 1.0;
+    }
+    
+    line {
+      stroke: black;
+      stroke-width: 1.5px;
+      stroke-opacity: 1.0;
+    }
+
+    div.tooltip {	
+        position: absolute;			
+        text-align: center;			
+        width: 180px;					
+        height: 120px;					
+        padding: 2px;				
+        font: 12px sans-serif;		
+        background: lightsteelblue;
+        border: 0px;		
+        border-radius: 8px;			
+        pointer-events: none;			
+    }
+
+    div.tooltip_high {	
+        position: absolute;			
+        text-align: center;			
+        width: 60px;					
+        height: 28px;					
+        padding: 2px;				
+        font: 12px sans-serif;		
+        background: green;	
+        border: 0px;		
+        border-radius: 8px;			
+        pointer-events: none;			
+    }
+
+    div.tooltip_low {	
+        position: absolute;			
+        text-align: center;			
+        width: 60px;					
+        height: 28px;					
+        padding: 2px;				
+        font: 12px sans-serif;		
+        background: blue;	
+        border: 0px;		
+        border-radius: 8px;			
+        pointer-events: none;			
+    }
+    
+</style>
+
+  <body>
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default med" id="left-side-param">
+                    <div class="panel-heading">
+                      <h2 class="panel-title" style="display:inline-block" data-toggle="tooltip" data-placement="right" title="Tip: Our project problem and what we display in the visualization.">Isometry of Dimensionality Reduction  </h2>
+                        [Top-k Images and Similarity Scores (Descending Order)
+                        <!--<select id="param-EX-view" name="param-EX-view" data-toggle="tooltip" data-placement="right" title="Tip: the option of interaction methods." onchange="ExecuteMode()">
+                            <option value="1" selected>Points Exploration</option>
+                            <option value="2">None</option>
+                          </select>-->
+                        ]
+                    </div>
+                  <div class="panel-body">
+                      <table class="table table-borderless paramTable">
+                        <tbody>
+                            <td scope="row"><label id="data" for="param-dataset" data-toggle="tooltip" data-placement="right" title="Tip: dataset selection for analysis.">Datasets</label></td>
+                            <td>
+                              <select id="param-dataset" name="param-dataset" onChange="changeDataset(this.value);">
+                                <option value="mnist">MNIST</option>
+                                <option value="cifar" selected>CIFAR-10</option>
+                                <option value="empty">Upload File</option>
+                              </select>
+                            </td>
+                            <td><button type="button" class="button" id="FactRes" onclick="Reset()" data-toggle="tooltip" data-placement="right" title="Tip: Reset all the personalized parameters to the Default.">Reset</button></td>
+                          </tr>
+                          <tr>
+                            <td scope="row"><label for="param-sampleSize" data-toggle="tooltip" data-placement="right" title="Tip: Sampled dataset size (per class) for analysis."># Samples per class</label></td>
+                            <td><input id="param-sampleSize" type="range" min="1" max="50" value="10", step="1" ></td>
+                            <td><output for="param-sampleSize" id="param-sampleSize-value">10</output></td>
+                          </tr>
+                          <tr>
+                            <td scope="row"><label for="param-neighborHoodsize" data-toggle="tooltip" data-placement="right" title="Tip: The number of the neighbors of certain data point for comparison."># Neighbors</label></td>
+                            <td><input id="param-neighborHoodsize" type="range" min="1" max="10" value="3", step="1" ></td>
+                            <td><output for="param-neighborHoodsize" id="param-neighborHoodsize-value">3</output></td>
+                          </tr>
+                          <tr>
+                            <td scope="row"><label for="param-reducedDimension" data-toggle="tooltip" data-placement="right" title="Tip: The targeted dimension to reduce by the DR method.">Reduced Dimension</label></td>
+                            <td><input id="param-reducedDimension" type="range" min="2" max="100" value="2", step="1" ></td>
+                            <td><output for="param-reducedDimension" id="param-reducedDimension-value">2</output></td>
+                          </tr>
+                          <tr>
+                            <td scope="row" colspan="6"><button id="ExecuteBut" class="btn btn-primary btn-block" onclick="getCompute();" title="Tip: Execute new DR analysis." value="Execute new DR analysis"><i class="fas fa-running fa-lg"></i>Execute new DR analysis</button></td>
+                            <td scope="row" colspan="6"><button id="LoadBut" class="btn btn-primary btn-block" onclick="loadAnalysis();" title="Tip: Load new DR analysis." value="Load new DR analysis"><i class="fas fa-running fa-lg"></i>Load new DR analysis</button></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <div class="row">
+          <div id="tSNE" class="col-lg-6">
+            <div class="panel panel-default med">
+                <div class="panel-heading">
+                  <h2 class="panel-title" style="display:inline-block"  data-toggle="tooltip" data-placement="right" title="Tip: Choose the force layout based on the similarity in different dimensions.">t-SNE </h2>
+                  [Top-k Neighbors:
+                  <select id="tsne-param-view-dim" name="tsne-param-view-dim">
+                    <option value="1">High Dimensional Similarity Layout</option> 
+                    <option value="2" selected>Low Dimensional Similarity Layout</option> 
+                    <option value="3">None</option>
+                    </select>
+                  ]
+            </div>
+            </div>
+            <div class="panel-body">
+            <div id="tSNEcanvas"></div>
+            </div>
+          </div>
+          <div id = "UMAP" class="col-lg-6">
+            <div class="panel panel-default med">
+              <div class="panel-heading">
+                <h2 class="panel-title" style="display:inline-block"  data-toggle="tooltip" data-placement="right" title="Tip: Choose the force layout based on the similarity in different dimensions.">UMAP </h2>
+                [
+                <select id="umap-param-view-dim" name="umap-param-view-dim">
+                  <option value="1">High Dimensional Similarity Layout</option> 
+                  <option value="2" selected>Low Dimensional Similarity Layout</option> 
+                  <option value="3">None</option>
+                  </select>
+                ]
+              </div>
+            </div>
+              <div class="panel-body">
+              <div id="UMAPcanvas"></div>
+              </div>
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="panel panel-default med">
+              <div class="panel-heading">
+                <h2 class="panel-title" style="display:inline-block" title="Tip: The images and SSIM scores of the top-k neighbors of the selected data point in high dimension.">High Dimension </h2>
+                [SSIM Similarity]
+              </div>
+          </div>
+          <div class="panel-body">
+            <div id="tSNEhigh">
+            </div>
+          </div>
+          <div class="panel panel-default med">
+            <div class="panel-heading">
+              <h2 class="panel-title" style="display:inline-block" title="Tip: The images and L2 scores of the top-k neighbors of the selected data point in low dimension.">Low Dimension </h2>
+              [L2 Distance]
+            </div>
+        </div>
+        <div class="panel-body">
+          <div id="tSNElow"></div>
+        </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="panel panel-default med">
+              <div class="panel-heading">
+                <h2 class="panel-title" style="display:inline-block" title="Tip: The images and SSIM scores of the top-k neighbors of the selected data point in high dimension.">High Dimension </h2>
+                [SSIM Similarity]
+              </div>
+          </div>
+          <div class="panel-body">
+            <div id="UMAPhigh">
+            </div>
+          </div>
+          <div class="panel panel-default med">
+            <div class="panel-heading">
+              <h2 class="panel-title" style="display:inline-block" title="Tip: The images and L2 scores of the top-k neighbors of the selected data point in low dimension.">Low Dimension </h2>
+              [L2 Distance]
+            </div>
+        </div>
+        <div class="panel-body">
+          <div id="UMAPlow"></div>
+        </div>
+        </div>
+    </div>
+    
+    <!-- Load the core visualization script. -->
+    <script>
+        var tsne_dataset = document.getElementById('param-dataset').value;
+        var tsne_size = document.getElementById('param-sampleSize-value').value;
+        var tsne_nei_num = document.getElementById('param-neighborHoodsize-value').value;
+        var reduced_dim = document.getElementById('param-reducedDimension-value').value;
+        var tsne_view_dim = document.getElementById('tsne-param-view-dim').value;
+        if (tsne_view_dim == "1"){
+          var tsne_layout_choice = "SSIM";
+        } else if (tsne_view_dim == "2"){
+          var tsne_layout_choice = "low";
+        } else {
+          var tsne_layout_choice = "low";
+        }
+      
+      let tsne_csv_path = "./cs765_project-master/" + tsne_dataset + "_SSIM_TSNE_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + ".csv";
+      let tsne_json_path = "./json_data/" + tsne_dataset + "_SSIM_TSNE_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "_" + tsne_layout_choice + "_similarity.json";
+      
+      d3.csv(tsne_csv_path, function(error, data){
+        if (error) throw error;
+        d3.json(tsne_json_path, function(sim_error, sim_data){
+          var tsne_nodes = [];
+          var tsne_links = [];
+          sim_data.forEach(function(d){
+            tsne_links.push({source: d["src"], target: d["dst"], score: Number(d["score"])});
+          });
+          var cnt = 0;
+          data.forEach(function(d){
+            tsne_nodes.push({size: 10, 
+              center: cnt,
+              high_nei: d.high_nei.split(',').map(Number), 
+              high_sim: d.high_sim.split(',').map(Number), 
+              low_nei: d.low_nei.split(',').map(Number), 
+              low_sim: d.low_sim.split(',').map(Number)});
+              cnt += 1;
+          })
+          var high_nei_index = {};
+          var low_nei_index = {};
+          tsne_nodes.forEach(function(d){
+            high_nei_index[d.center] = d.high_nei;
+            low_nei_index[d.center] = d.low_nei;
+          })
+
+          var tsne_mouseOverfunc = function(d){
+            var circle = d3.select(this);
+            let str_path = "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_TSNE_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + d.center.toString() + ".jpg";
+            let str_high = "";
+            let str_low = "";
+
+            tsne_div
+            .transition(500)
+            .style("opacity", .9);
+            tsne_div
+            .html("index: " + d.center + "</br>" 
+            + "high dim nbrs: " + d.high_nei + "</br>" 
+            + "low dim nbrs: " + d.low_nei + "</br>"
+            + "<img src='" + str_path + "' width=100% height=100%/>")
+            .style("left", (d3.event.pageX) + "px")		
+            .style("top", (d3.event.pageY) + "px");
+            
+            // cifar_SSIM_UMAP_sample_100_num_neighbors_3
+            tsne_node
+              .transition(500)
+              .style("opacity", function(o){
+                  return tsne_isTopk(o, d) || tsne_islowTopk(o, d) || isEqual(o, d) ? 1.0 : 0.2;
+              })
+              .style("fill", function(o){
+                  if (tsne_isTopk(o, d) && tsne_islowTopk(o, d)){
+                      fillcolor = "red";
+                      str_high += "<img src='" + "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_TSNE_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + o.center.toString() + ".jpg" + "'width=10% height=10%/>";
+                      str_low += "<img src='" + "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_TSNE_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + o.center.toString() + ".jpg" + "'width=10% height=10%/>";
+                  } else if (tsne_isTopk(o, d)){
+                      fillcolor = "green";
+                      str_high += "<img src='" + "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_TSNE_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + o.center.toString() + ".jpg" + "'width=10% height=10%/>";
+                  } else if (tsne_islowTopk(o, d)){
+                      fillcolor = "blue";
+                      str_low += "<img src='" + "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_TSNE_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + o.center.toString() + ".jpg" + "'width=10% height=10%/>";
+                  } else if(isEqual(o, d)){
+                      fillcolor = "hotpink";
+                  } else {
+                      fillcolor = "#000";
+                  }
+                  tsne_high.transition(500).style("opcacity", 1);
+                  tsne_high.html(str_high + "</br>" + d.high_sim[0].toString().substr(0, 11) + ", &emsp;" + d.high_sim[1].toString().substr(0, 11) + ", &emsp;" + d.high_sim[2].toString().substr(0, 11));
+                  tsne_low.transition(500).style("opcacity", 1);
+                  tsne_low.html(str_low + "</br>" + d.low_sim[0].toString().substr(0, 11) + ", &emsp;" + d.low_sim[1].toString().substr(0, 11) + ", &emsp;" + d.low_sim[2].toString().substr(0, 11));
+                  return fillcolor;
+              });
+
+              circle
+              .transition(500)
+              .attr("r", function(){
+                  return 1.4 * node_radius(d);
+              });
+          }
+
+          var tsne_mouseOutfunc = function(){
+              var circle = d3.select(this);
+
+              tsne_node.transition(500);
+              circle.transition(500)
+              .attr("r", node_radius);
+
+              tsne_div.transition(500).style("opacity", 0);
+          }
+
+          function isEqual(a, b){
+              return a.index == b.index;
+          }
+
+          function tsne_isTopk(a, b){
+              return high_nei_index[b.index].includes(a.index);
+          }
+
+          function tsne_islowTopk(a, b){
+              return low_nei_index[b.index].includes(a.index);
+          }
+
+          function node_radius(d){
+              return Math.pow(40.0 * d.size, 1/3);
+          }
+
+          function tsne_tick() {
+          tsne_node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+          }
+
+          var width = 1100;
+          var height = 750;
+
+          var tsne_force = d3.layout.force()
+          .nodes(tsne_nodes)
+          .charge(-1000)
+          .friction(0.6)
+          .gravity(0.6)
+          .size([width,height]);
+
+          if (tsne_view_dim == "1"){
+            if (tsne_dataset == "mnist"){
+              tsne_force
+              .links(tsne_links)
+              .linkDistance(function(d){
+                return d.score * 500;
+              });
+            } else if (tsne_dataset == "cifar"){
+              tsne_force
+              .links(tsne_links)
+              .linkDistance(function(d){
+                return d.score * 1000;
+              });
+            }
+          } else if (tsne_view_dim == "2"){
+            if (tsne_dataset == "mnist"){
+              tsne_force
+              .links(tsne_links)
+              .linkDistance(function(d){
+                return -d.score * 8;
+              });
+            } else if (tsne_dataset == "cifar"){
+              tsne_force
+              .links(tsne_links)
+              .linkDistance(function(d){
+                return -d.score / 7;
+              });
+            }
+          }
+
+          tsne_force
+          .start();
+
+          var tsne_div = d3.select("body").append("div")
+          .attr("class", "tooltip")
+          .style("opacity", 0);
+
+          var tsne_high = d3.select("#tSNEhigh").append("tSNEhigh");
+          var tsne_low = d3.select("#tSNElow").append("tSNElow");
+
+          var tsne_svg = d3.select("#tSNEcanvas").append("svg")
+          .attr("width", width)
+          .attr("height", height);
+
+          tsne_svg.append("circle").attr("cx",840).attr("cy",40).attr("r", 6).style("fill", "hotpink");
+          tsne_svg.append("circle").attr("cx",840).attr("cy",70).attr("r", 6).style("fill", "blue");
+          tsne_svg.append("circle").attr("cx",840).attr("cy",100).attr("r", 6).style("fill", "green");
+          tsne_svg.append("circle").attr("cx",840).attr("cy",130).attr("r", 6).style("fill", "red");
+          tsne_svg.append("text").attr("x", 860).attr("y", 40).text("Selected point").style("font-size", "15px").attr("alignment-baseline","middle");
+          tsne_svg.append("text").attr("x", 860).attr("y", 70).text("Low-dim Neighbors").style("font-size", "15px").attr("alignment-baseline","middle");
+          tsne_svg.append("text").attr("x", 860).attr("y", 100).text("High-dim Neighbors").style("font-size", "15px").attr("alignment-baseline","middle");
+          tsne_svg.append("text").attr("x", 860).attr("y", 130).text("Coincident Neighbors").style("font-size", "15px").attr("alignment-baseline","middle");
+
+          var tsne_node = tsne_svg.selectAll(".node")
+          .data(tsne_nodes)
+          .enter().append("g")
+          .attr("class", "node")
+          .call(tsne_force.drag);
+
+          tsne_node
+          .append("circle")
+          .attr("r", node_radius)
+          .on("mouseover", tsne_mouseOverfunc)
+          .on("mouseout", tsne_mouseOutfunc);
+          
+          
+          tsne_force
+          .on("tick", tsne_tick);
+        });
+      });
+
+      
+  </script>
+    <script>
+      var umap_dataset = document.getElementById('param-dataset').value;
+      var umap_size = document.getElementById('param-sampleSize-value').value;
+      var umap_nei_num = document.getElementById('param-neighborHoodsize-value').value;
+      var umap_view_dim = document.getElementById('umap-param-view-dim').value;
+      if (umap_view_dim == "1"){
+        var umap_layout_choice = "SSIM";
+      } else if (umap_view_dim == "2"){
+        var umap_layout_choice = "low";
+      } else {
+        var umap_layout_choice = "low";
+      }
+
+      function Reset(){
+        var dataset_sel = document.getElementById('param-dataset');
+        dataset_sel.selectedIndex = 0;
+        $("#data").html('Datasets');
+        d3.select("#data").select("input").remove();
+        var size_sel = document.getElementById('param-sampleSize');
+        size_sel.value = 10;
+        var size_value_sel = document.getElementById('param-sampleSize-value');
+        size_value_sel.value = 10;
+        var nei_sel = document.getElementById('param-neighborHoodsize');
+        nei_sel.value = 3;
+        var nei_value_sel = document.getElementById('param-neighborHoodsize-value');
+        nei_value_sel.value = 3;
+        var reduced_dim_sel = document.getElementById('param-reducedDimension');
+        reduced_dim_sel.value = 2;
+        var reduced_dim_value_sel = document.getElementById('param-reducedDimension-value');
+        reduced_dim_value_sel.value = 2;
+      }
+      
+      let umap_csv_path = "./cs765_project-master/" + tsne_dataset + "_SSIM_UMAP_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + ".csv";
+      let umap_json_path = "./json_data/" + tsne_dataset + "_SSIM_UMAP_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "_" + tsne_layout_choice + "_similarity.json";
+      
+      d3.csv(umap_csv_path, function(error, data){
+        if (error) throw error;
+        d3.json(umap_json_path, function(sim_error, sim_data){
+          var umap_nodes = [];
+          var umap_links = [];
+          sim_data.forEach(function(d){
+            umap_links.push({source: d["src"], target: d["dst"], score: Number(d["score"])});
+          });
+          var cnt = 0;
+          data.forEach(function(d){
+            umap_nodes.push({size: 10, 
+              center: cnt,
+              high_nei: d.high_nei.split(',').map(Number), 
+              high_sim: d.high_sim.split(',').map(Number), 
+              low_nei: d.low_nei.split(',').map(Number), 
+              low_sim: d.low_sim.split(',').map(Number)});
+              cnt += 1;
+          })
+          var umap_high_nei_index = {};
+          var umap_low_nei_index = {};
+          umap_nodes.forEach(function(d){
+            umap_high_nei_index[d.center] = d.high_nei;
+            umap_low_nei_index[d.center] = d.low_nei;
+          })
+
+          var umap_mouseOverfunc = function(d){
+            var circle = d3.select(this);
+            let str_path = "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_UMAP_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + d.center.toString() + ".jpg";
+            let str_high = "";
+            let str_low = "";
+
+            umap_div
+            .transition(500)
+            .style("opacity", .9);
+            umap_div
+            .html("index: " + d.center + "</br>" 
+            + "high dim nbrs: " + d.high_nei + "</br>" 
+            + "low dim nbrs: " + d.low_nei + "</br>"
+            + "<img src='" + str_path + "' width=100% height=100%/>")
+            .style("left", (d3.event.pageX) + "px")		
+            .style("top", (d3.event.pageY) + "px");
+            
+            // cifar_SSIM_UMAP_sample_100_num_neighbors_3
+            umap_node
+              .transition(500)
+              .style("opacity", function(o){
+                  return umap_isTopk(o, d) || umap_islowTopk(o, d) || isEqual(o, d) ? 1.0 : 0.2;
+              })
+              .style("fill", function(o){
+                  if (umap_isTopk(o, d) && umap_islowTopk(o, d)){
+                      fillcolor = "red";
+                      str_high += "<img src='" + "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_UMAP_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + o.center.toString() + ".jpg" + "'width=10% height=10%/>";
+                      str_low += "<img src='" + "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_UMAP_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + o.center.toString() + ".jpg" + "'width=10% height=10%/>";
+                  } else if (umap_isTopk(o, d)){
+                      fillcolor = "green";
+                      str_high += "<img src='" + "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_UMAP_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + o.center.toString() + ".jpg" + "'width=10% height=10%/>";
+                  } else if (umap_islowTopk(o, d)){
+                      fillcolor = "blue";
+                      str_low += "<img src='" + "https://pages.cs.wisc.edu/~mucai/cs765/" + tsne_dataset + "_SSIM_UMAP_sample_" + tsne_size + "0_num_neighbors_" + tsne_nei_num + "/" + o.center.toString() + ".jpg" + "'width=10% height=10%/>";
+                  } else if(isEqual(o, d)){
+                      fillcolor = "hotpink";
+                  } else {
+                      fillcolor = "#000";
+                  }
+                  umap_high.transition(500).style("opcacity", 1);
+                  umap_high.html(str_high + "</br>" + d.high_sim[0].toString().substr(0, 11) + ", &emsp;" + d.high_sim[1].toString().substr(0, 11) + ", &emsp;" + d.high_sim[2].toString().substr(0, 11));
+                  umap_low.transition(500).style("opcacity", 1);
+                  umap_low.html(str_low + "</br>" + d.low_sim[0].toString().substr(0, 11) + ", &emsp;" + d.low_sim[1].toString().substr(0, 11) + ", &emsp;" + d.low_sim[2].toString().substr(0, 11));
+                  return fillcolor;
+              });
+
+              circle
+              .transition(500)
+              .attr("r", function(){
+                  return 1.4 * node_radius(d);
+              });
+          }
+
+          var umap_mouseOutfunc = function(){
+              var circle = d3.select(this);
+
+              umap_node.transition(500);
+              circle.transition(500)
+              .attr("r", node_radius);
+
+              umap_div.transition(500).style("opacity", 0);
+          }
+
+          function isEqual(a, b){
+              return a.index == b.index;
+          }
+
+          function umap_isTopk(a, b){
+              return umap_high_nei_index[b.index].includes(a.index);
+          }
+
+          function umap_islowTopk(a, b){
+              return umap_low_nei_index[b.index].includes(a.index);
+          }
+
+          function node_radius(d){
+              return Math.pow(40.0 * d.size, 1/3);
+          }
+
+          function umap_tick() {
+          umap_node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+          }
+
+          var width = 1100;
+          var height = 750;
+
+          var umap_force = d3.layout.force()
+          .nodes(umap_nodes)
+          .charge(-1000)
+          .friction(0.6)
+          .gravity(0.6)
+          .size([width,height]);
+
+          if (umap_view_dim == "1"){
+            if (umap_dataset == "mnist"){
+              umap_force
+              .links(umap_links)
+              .linkDistance(function(d){
+                return d.score * 500;
+              });
+            } else if (umap_dataset == "cifar"){
+              umap_force
+              .links(umap_links)
+              .linkDistance(function(d){
+                return d.score * 1000;
+              });
+            }
+          } else if (umap_view_dim == "2"){
+            if (umap_dataset == "mnist"){
+              umap_force
+              .links(umap_links)
+              .linkDistance(function(d){
+                return -d.score * 40;
+              });
+            } else if (umap_dataset == "cifar"){
+              umap_force
+              .links(umap_links)
+              .linkDistance(function(d){
+                return -d.score * 30;
+              });
+            }
+          }
+
+          umap_force
+          .start();
+
+          var umap_div = d3.select("body").append("div")
+          .attr("class", "tooltip")
+          .style("opacity", 0);
+
+          var umap_high = d3.select("#UMAPhigh").append("UMAPhigh");
+          var umap_low = d3.select("#UMAPlow").append("UMAPlow");
+
+          var umap_svg = d3.select("#UMAPcanvas").append("svg")
+          .attr("width", width)
+          .attr("height", height);
+
+          umap_svg.append("circle").attr("cx",840).attr("cy",40).attr("r", 6).style("fill", "hotpink");
+          umap_svg.append("circle").attr("cx",840).attr("cy",70).attr("r", 6).style("fill", "blue");
+          umap_svg.append("circle").attr("cx",840).attr("cy",100).attr("r", 6).style("fill", "green");
+          umap_svg.append("circle").attr("cx",840).attr("cy",130).attr("r", 6).style("fill", "red");
+          umap_svg.append("text").attr("x", 860).attr("y", 40).text("Selected point").style("font-size", "15px").attr("alignment-baseline","middle");
+          umap_svg.append("text").attr("x", 860).attr("y", 70).text("Low-dim Neighbors").style("font-size", "15px").attr("alignment-baseline","middle");
+          umap_svg.append("text").attr("x", 860).attr("y", 100).text("High-dim Neighbors").style("font-size", "15px").attr("alignment-baseline","middle");
+          umap_svg.append("text").attr("x", 860).attr("y", 130).text("Coincident Neighbors").style("font-size", "15px").attr("alignment-baseline","middle");
+
+
+          var umap_node = umap_svg.selectAll(".node")
+          .data(umap_nodes)
+          .enter().append("g")
+          .attr("class", "node")
+          .call(umap_force.drag);
+
+          umap_node
+          .append("circle")
+          .attr("r", node_radius)
+          .on("mouseover", umap_mouseOverfunc)
+          .on("mouseout", umap_mouseOutfunc);
+          
+          
+          umap_force
+          .on("tick", umap_tick);
+        });
+      });
+    </script>
+
+
+    <script src="./js/tsne_vis.js"></script>
+
+    <script>
+
+      function render() {
+        myResponsiveComponent({
+          width: document.body.clientWidth,
+          height: document.body.clientHeight,
+        });
+      }
+
+      render();
+
+      window.addEventListener('resize', render);
+
+      // Tooltip
+      $(document).ready(function(){
+        $("[rel='tooltip']").tooltip();
+      });
+
+      $(document).ready(function(){
+      $("#ExecuteBut").click(function(){
+          var mode = document.getElementById('param-EX-view').value
+          mode = parseInt(mode)
+
+          if (mode == 1) {
+            $("#myModal").modal('show');
+            $('.modal-backdrop').removeClass("modal-backdrop");  
+          }
+        });
+      });
+
+      function closeModalFun () {
+        $('#myModal').modal('hide');
+      }
+
+      $("#cost").html('(Ov. Cost: ?)');
+      $("#datasetDetails").html('(Num. of Dim. and Ins.: ?)');
+      $("#CategoryName").html('No labels');
+      $("#knnBarChartDetails").html('(Num. of Selected Points: 0/0)');
+      /* This script is used in order to give functionalities to the different buttons provide through the front-end. */
+      $('#param-lim').bind('input', function () { $('#param-lim-value').text($('#param-lim').val()); }); 
+      $('#param-corr').bind('input', function () { $('#param-corr-value').text($('#param-corr').val()); });
+      $('#param-corr2').bind('input', function () { $('#param-corr-value2').text($('#param-corr2').val()); });
+      $('#param-corlim').bind('input', function () { $('#param-corlim-value').text($('#param-corlim').val()); });
+      $('#param-costlim').bind('input', function () { $('#param-costlim-value').text($('#param-costlim').val()); });
+      $('#param-perplexity').bind('input', function () { $('#param-perplexity-value').text($('#param-perplexity').val()); });
+      $('#param-earlyexag').bind('input', function () { $('#param-earlyexag-value').text($('#param-earlyexag').val()); });
+      $('#param-learningrate').bind('input', function () { $('#param-learningrate-value').text($('#param-learningrate').val()); });
+      $('#param-maxiter').bind('input', function () { $('#param-maxiter-value').text($('#param-maxiter').val()); });
+      $('#param-neighborHoodsize').bind('input', function () { $('#param-neighborHoodsize-value').text($('#param-neighborHoodsize').val()); });
+      $('#param-reducedDimension').bind('input', function () { $('#param-reducedDimension-value').text($('#param-reducedDimension').val()); });
+      $('#param-sampleSize').bind('input', function () { $('#param-sampleSize-value').text($('#param-sampleSize').val()); });
+
+      // Get the container element
+      var btnContainer = document.getElementById("commBtn"); //Add a new comment button
+
+      // Get all buttons with class="btn" inside the container
+      var btns = btnContainer.getElementsByClassName("btn");
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener("click", function() {
+        let current = document.getElementById("commBtn").getElementsByClassName("active");
+        current[0].className = current[0].className.replace("btn btn-default active", "btn btn-default");
+        this.className += " active";
+        });
+      }
+
+      // Get the container element
+      var btnContainer2 = document.getElementById("resetAllFilters"); //resetAllFilters button
+
+      // Get all buttons with class="btn" inside the container
+      var btns2 = btnContainer2.getElementsByClassName("btn");
+
+      for (var i = 0; i < btns2.length; i++) {
+        btns2[i].addEventListener("click", function() {
+        let current = document.getElementsByClassName("active");
+        current[1].className = current[1].className.replace("btn btn-info active", "btn btn-info");
+        this.className += " active";
+        });
+      }
+
+      /* On resize refresh the shepardHeatmap */
+      window.onresize = function(event) {
+        if ( document.getElementById('cost').hasChildNodes() ) {
+          
+          // Clear legend for the shepardHeatmap
+          //var svgLegend = d3.select("#legend3");
+          //svgLegend.selectAll("*").remove();
+
+          // Clear the SheapHeardmap before refreshing
+          //var svg = d3.select("#sheparheat");
+          //svg.selectAll("*").remove();
+          
+          // Call the ShepardHeatmap again to be redrawn
+          //ShepardHeatMap();
+          MainVisual();
+
+        }
+      }
+
+      /* When the user clicks on the button, 
+      toggle between hiding and showing the dropdown content */
+      function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+      }
+
+      // Close the dropdown menu if the user clicks outside of it
+      window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn')) {
+          var dropdowns = document.getElementsByClassName("dropdown-content");
+          var i;
+          for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+              openDropdown.classList.remove('show');
+            }
+          }
+        }
+      }
+    </script>
+
+  </body>
+
+</html>

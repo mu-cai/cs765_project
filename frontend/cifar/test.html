@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node circle {
+  stroke: white;
+  stroke-width: 1.5px;
+  opacity: 1.0;
+}
+
+line {
+  stroke: black;
+  stroke-width: 1.5px;
+  stroke-opacity: 1.0;
+}
+
+div.tooltip {	
+        position: absolute;			
+        text-align: center;			
+        width: 60px;					
+        height: 28px;					
+        padding: 2px;				
+        font: 12px sans-serif;		
+        background: lightsteelblue;	
+        border: 0px;		
+        border-radius: 8px;			
+        pointer-events: none;			
+    }
+
+</style>
+<body>
+<script src="https://d3js.org/d3.v3.js"></script>
+<div id="test"></div>
+<script>
+    data = {
+        nodes: [
+            {size: 50, value: 1},
+            {size: 10, value: 2},
+            {size: 10, value: 3},
+            {size: 10, value: 4}
+        ],
+        links: [
+            {center: 0, nei: [1, 2], nei_2: [1, 3]},
+            {center: 1, nei: [3, 0], nei_2: [2, 3]},
+            {center: 2, nei: [1, 3], nei_2: [0, 1]},
+            {center: 3, nei: [0, 1], nei_2: [1, 2]}
+        ]
+    }
+    var nodes = data.nodes;
+    var tsne_links = data.links;
+
+    function node_radius(d){
+        return Math.pow(40.0 * d.size, 1/3);
+    }
+
+    function tick() {
+    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    }
+
+    var width = 1000;
+    var height = 800;
+
+    var force = d3.layout.force()
+    .nodes(nodes)
+    .charge(-3000)
+    .friction(0.6)
+    .gravity(0.6)
+    .size([width,height])
+    .start();
+
+    var tsne_svg = d3.select("#test").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+    var node = tsne_svg.selectAll(".node")
+    .data(nodes)
+    .enter().append("g")
+    .attr("class", "node")
+    .call(force.drag);
+
+    node
+    .append("circle")
+    .attr("r", node_radius);
+    
+    
+    force
+    .on("tick", tick);
+</script>
+<!--<script>
+  var mat = new Array(4).fill(new Array(4))
+  for (var i = 0; i < 4; i++){
+      for (var j = 0; j < 4; j++){
+          var num = Math.floor(Math.random() * 10);
+          mat[i][j] = num;
+      }
+  }
+  data = {
+      nodes: [
+          {size: 10, value: 1},
+          {size: 10, value: 2},
+          {size: 10, value: 3},
+          {size: 10, value: 4}
+      ],
+      links: [
+          {center: 0, nei: [1, 2]},
+          {center: 1, nei: [3, 0]},
+          {center: 2, nei: [1, 3]},
+          {center: 3, nei: [0, 1]}
+      ]
+  }
+  var nodes = data.nodes;
+  var links = data.links;
+  var neiByindex = {};
+  links.forEach(function(d){
+      neiByindex[d.center] = d.nei;
+  });
+  
+  var mouseOverfunc = function(d){
+      var circle = d3.select(this);
+
+      div.transition(500).style("opacity", 1);
+      div
+      .html(d.size + "</br>" + d.value)
+      .style("left", (d3.event.pageX) + "px")		
+      .style("top", (d3.event.pageY) + "px");
+
+      node
+      .transition(500)
+      .style("opacity", function(o){
+          return isTopk(o, d) || isEqual(o, d) ? 1.0 : 0.2;
+      })
+      .style("fill", function(o){
+          if (isTopk(o, d)){
+              fillcolor = "red";
+          } else if(isEqual(o, d)){
+              fillcolor = "hotpink";
+          } else {
+              fillcolor = "#000";
+          }
+          return fillcolor;
+      });
+
+      circle
+      .transition(500)
+      .attr("r", function(){
+          return 1.4 * node_radius(d);
+      });
+  }
+
+  var mouseOutfunc = function(){
+      var circle = d3.select(this);
+
+      node.transition(500);
+      circle.transition(500).attr("r", node_radius);
+  }
+
+  function isEqual(a, b){
+      return a.index == b.index;
+  }
+
+  function isTopk(a, b){
+      return neiByindex[b.index].includes(a.index);
+  }
+
+  function node_radius(d){
+      return Math.pow(40.0 * d.size, 1/3);
+  }
+
+  function tick() {
+  node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+  }
+
+  var width = 1000;
+  var height = 500;
+
+  var force = d3.layout.force()
+  .nodes(nodes)
+  .charge(-3000)
+  .friction(0.6)
+  .gravity(0.6)
+  .size([width,height])
+  .start();
+
+  var div = d3.select("#test").append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
+  
+  var svg = d3.select("#test").append("svg")
+  .attr("width", width)
+  .attr("height", height);
+
+  var node = svg.selectAll(".node")
+  .data(nodes)
+  .enter().append("g")
+  .attr("class", "node")
+  .call(force.drag);
+
+  node
+  .append("circle")
+  .attr("r", node_radius)
+  .on("mouseover", mouseOverfunc)
+  .on("mouseout", mouseOutfunc);
+  
+  force
+  .on("tick",tick);
+</script>
+</body>

@@ -1,0 +1,589 @@
+/* Custom styling */
+
+html, body {
+    max-width: 100% !important;
+    margin-top: -5px !important;
+    font-family: sans-serif !important;
+    font-size: calc(0.32em + 1vmin) !important;
+}
+
+h2 {
+  font-size: calc(0.5em + 1vmin) !important;
+}
+
+select {
+  font-size: calc(0.35em + 1vmin) !important;
+}
+
+button {
+  font-size: calc(0.35em + 1vmin) !important;
+}
+
+.container-fluid {
+  margin-top: 15px;
+}
+
+.table {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+table td {
+  vertical-align: middle !important;
+  padding: 2 !important;
+  margin: 0 !important;
+}
+
+.centerTable {
+  text-align: center; 
+}
+
+.centerTable td {
+  padding: 0.9vh !important;
+}
+
+
+input[type='file'] {
+  color: transparent;    /* Hides your "No File Selected" */
+  width: 95px;
+}
+
+#param-correlation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#param-correlation > .param {
+  display: flex;
+  margin: 5px 0px;
+}
+
+#param-correlation > .param > label {
+  width: 200px;
+  text-align: left;
+  padding: 4px 0 0 0px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  cursor: default;
+}
+
+#param-correlation > .param > input[type='range'] {
+  width: 60%;
+  margin-right: 10px;
+  text-align: left;
+}
+
+#param-corlim {
+  width: 75% !important;
+}
+
+#param-costlim {
+  width: 65% !important;
+}
+
+#param-correlation > .param > select {
+flex: 0 0 45%;
+width: 100%;
+text-align: left;
+}
+
+#param-correlation > .param > output {
+flex: 1;
+text-align: left;
+padding:5px 0;
+vertical-align: middle;
+user-select: none;
+-webkit-user-select: none;
+-moz-user-select: none;
+cursor: default;
+}
+
+.right-side-cor {
+  margin-top: -120px;
+}
+
+.right-side-hist {
+  margin-left:-2px;
+  margin-top: -0.5vh;
+}
+
+#left-side-visual{
+  margin-left: 15px;
+  margin-right: -5px;
+}
+
+/* Styling of the main canvas */
+#modtSNEcanvas {
+    width: 50vw !important;
+    height: 66vh !important;
+    border: 1px solid black;
+    position: absolute;
+    margin-left: -15px;
+    z-index: 2;
+}
+
+.dot {
+  fill: steelblue;
+}
+
+.panel-body {
+  padding: 5px !important;
+}
+
+.bounding-rect {
+  stroke: red;
+  stroke-width: 1;
+  fill: transparent;
+}
+
+#UMAP_canvas {
+  width: 50vw !important;
+  height: 66vh !important;
+  border: 1px solid black;
+  position: absolute;
+  margin-left: -15px;
+  z-index: 2;
+}
+
+.dot {
+fill: steelblue;
+}
+
+.panel-body {
+padding: 5px !important;
+}
+
+.bounding-rect {
+stroke: red;
+stroke-width: 1;
+fill: transparent;
+}
+
+#tSNE_canvas {
+  width: 50vw !important;
+  height: 66vh !important;
+  border: 1px solid black;
+  position: absolute;
+  margin-left: -15px;
+  z-index: 2;
+}
+
+.dot {
+fill: steelblue;
+}
+
+.panel-body {
+padding: 5px !important;
+}
+
+.bounding-rect {
+stroke: red;
+stroke-width: 1;
+fill: transparent;
+}
+
+#overviewRect {
+  border: 1px solid black;
+  width: 11vw;
+  height: 13vh;
+  position: absolute;
+  z-index: 1;
+}
+
+/* A little styling for knn's bar chart */
+#knnBarChart {
+  width: 48.7vw !important;
+  position: absolute !important;
+  z-index: 1;
+}
+
+#hider {
+  background-color: white;
+  position: absolute !important;
+  z-index: 2;
+}
+
+.med-bottom-neigh {
+  margin-left: -16px;
+  margin-top: 67vh;
+  position: absolute;
+  width: 50.1vw !important;
+  height: 14.5vh !important;
+}
+
+.med-bottomProv {
+  margin-left: -16px;
+  width: 50.1vw !important;
+  height: 16vh !important;
+}
+
+#comment {
+  width: 8vw !important;
+  height: 2.5vh !important;
+}
+
+/* Styling of the main SVG behind canvas */
+#modtSNEcanvas_svg {
+  width: 50vw ;
+  margin-top: 17.5vh;
+  height: 66vh !important;
+  opacity: 1.0;
+  position:absolute; 
+  z-index: 2;
+}
+
+#modtSNEcanvas_svg_Schema {
+  width: 50vw;
+  height: 66vh !important;
+  opacity: 1.0;
+  position:absolute; 
+  margin-left: -15px;
+  z-index: 2;
+}
+
+circle.swatch{
+  opacity: 0.5;
+}
+
+/* Legend of the Overview t-SNE canvas */
+#legend2 {
+   height: 11vh;
+   width: 10.5vw;
+   text-align: left;
+   overflow: auto;
+   margin-left: -6px;
+   margin-top: 2px;
+  }
+
+  /* Legend of the Overview t-SNE canvas */
+ #legend1 {
+  height: 19vh;
+  margin-top: -0.5vh;
+  width: 5.5vw;
+  text-align: left;
+ }
+/* Legend of the Overview t-SNE canvas */
+#legend4 {
+height: 13.5vh;
+width: 7vw;
+margin-top: -1.5vh;
+text-align: left;
+}
+
+/* Styling of the ShepardHeatmap */
+#sheparheat {
+  width: 10.65vw;
+  height: 10.65vw;
+  position: absolute;
+}
+
+/* Number of Points font-size */
+text.legendtitle {
+  font-size: calc(0.35em + 0.8vmin) !important;
+}
+
+/* Number of Points font-size */
+text.label {
+  font-size: calc(0.35em + 0.8vmin) !important;
+}
+
+/* Styling of the ShepardHeatmap */
+svg#legend3 {
+  height: 19.2vh;
+  width: 10.65vw;
+  margin-top: 2px;
+  font-size: calc(0.35em + 1vmin) !important;
+  text-align: left;
+  overflow: auto;
+}
+
+#PlotCost {
+  height: 3vw;
+  width: 8.1vw;
+  margin-left: -5px;
+  text-align: left;
+  z-index: 1;
+}
+
+#hider2 {
+  margin-left: -5px;
+  text-align: left;
+  background-color: white;
+  position: absolute !important;
+  z-index: 2;
+}
+
+.axis text {
+  font-size: 9pt;
+  fill: #000;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: none;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-size: 14px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: rgb(185, 185, 185);
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+/* Dropdown Button */
+.dropbtn {
+  background-color: rgb(185, 185, 185);
+  color: black;
+  padding: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+  background-color: lightblue;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: rgb(146, 168, 177);
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+
+/* This is for the Correlation bar chart */
+#correlation{
+  margin-left: -0.5vw;
+}
+
+.y.axis line {
+  fill: none;
+}
+
+.x.axis line {
+  fill: none;
+  stroke: #e0e0e0;
+  shape-rendering: crispEdges;
+}
+
+.axis path {
+  display: none;
+}
+
+.brush .extent {
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+.resize {
+  display: inline !important; /* show when empty */
+  fill: #7A7A7A;
+  fill-opacity: 1;
+  stroke: #7A7A7A;
+  stroke-width: 2px;
+}
+
+.bar {
+  shape-rendering: crispEdges;
+}
+
+/* Styling for the annotation circle */
+.annotation circle {
+  fill: none;
+  stroke: black;
+}
+
+.annotation path {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+/* Styling of the main SVG behind canvas */
+#SvgAnnotator {
+  position: absolute;
+  margin-left:-15px; 
+  z-index: 1;
+}
+
+#selectionLabel{
+  border: 1px solid black;
+  padding: 1px 1px 1px 1px;
+}
+
+#PCP{
+  margin-top:0px;
+  width: 22.6vw;
+  height: 17vh;
+}
+
+.parent-row{
+  display: flex;
+ }
+ .children-columns{
+   display: flex;
+ }
+/* Margins for the extra-information panel and the kNNInfo */
+#extra-information {
+  margin-top: -5px;
+  margin-left: -12px;
+}
+
+#kNNInfo {
+  margin-top: 10px;
+}
+
+/* Load and Save Analysis Buttons Styling */
+.button {
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+}
+
+/* Load and Save Analysis Buttons Styling */
+.buttonOptimize {
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  margin-left:10px;
+  margin-top: -2px;
+}
+
+/* Draw a red colored button for reset */
+#FactRes{
+  color: red;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+#isItLoaded {
+  display: none;
+}
+#loading {
+  z-index: 10;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 90vh;
+}
+
+/* kNN barchart color box (legend)*/
+ul {
+  margin: 20px;
+}
+
+.input-color {
+  position: relative;
+}
+.input-color input {
+  padding-left: 20px;
+}
+.input-color .color-box {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  background-color: #ccc;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+}
+
+#costHist {
+  width: 6vw;
+  height: 16.5vh;
+}
+
+#loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 140px;
+  height: 140px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  margin-left: 450px;
+  margin-top: 500px;
+  margin-bottom: 500px;
+}
+
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-100px; opacity:0 } 
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom { 
+  from{ bottom:-100px; opacity:0 } 
+  to{ bottom:0; opacity:1 }
+}
+
+#myDiv {
+  display: none;
+  text-align: center;
+}
