@@ -1,6 +1,7 @@
 # Interactive, Interpretable and User-Friendly Dimensionality Reduction Visualization
 Go to this [website](https://pages.cs.wisc.edu/~mucai/cs765/cs765_project/DR_vis) to see our visualization
 ## Backend Part
+You may install the following libraries using `pip` or `conda`. 
 ### Environment and dependencies
 - python 3.8
 - sklearn
@@ -10,9 +11,11 @@ Go to this [website](https://pages.cs.wisc.edu/~mucai/cs765/cs765_project/DR_vis
 - csv
 - matplotlib 
 
-if you decide to use LPIPS, then you also need to install:
+If you decide to use LPIPS, then you also need to install:
 - pytorch 1.10
 - lpips
+
+You may also try to directly build environment using the provided `backend/packages.txt` using conda. 
 
 ### Run Backend
 Going to the backend directory `cd backend`, then simply run command `python backend.py`. You can get the 
