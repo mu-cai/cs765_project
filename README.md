@@ -11,7 +11,7 @@ You may install the following libraries using `pip` or `conda`.
 - numpy
 - pandas
 - csv
-- matplotlib 
+- matplotlib  
 
 If you decide to use LPIPS, then you also need to install:
 - pytorch 1.10
