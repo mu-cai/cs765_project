@@ -1,5 +1,7 @@
 # Interactive, Interpretable and User-Friendly Dimensionality Reduction Visualization
 Go to this [website](https://pages.cs.wisc.edu/~mucai/cs765/cs765_project/DR_vis) to see our visualization
+
+![model_layout](teaser/layout.png)
 ## Backend Part
 You may install the following libraries using `pip` or `conda`. 
 ### Environment and dependencies
@@ -15,13 +17,13 @@ If you decide to use LPIPS, then you also need to install:
 - pytorch 1.10
 - lpips
 
-You may also try to directly build environment using the provided `backend/packages.txt` using conda. 
+You may also try to directly build the environment using the provided `backend/packages.txt` using conda. 
 
 ### Run Backend
-Going to the backend directory `cd backend`, then simply run command `python backend.py`. You can get the 
-the results under the default setting, which is equivalent to 
+Go to the backend directory `cd backend`, then simply run command `python backend.py`. You can get the 
+results under the default setting, which is equivalent to 
 `python -W ignore backend.py --low_score TSNE --dataset mnist --sample_per_class 10`.
-Altenatively, you can specify the parameters to get the results you want.
+Alternatively, you can specify the parameters to get the results you want.
 
 Besides, you can use `bash run.sh` to get the results under all kinds of possible 
 parameter combinations for this project. 
@@ -34,5 +36,6 @@ To be specific, our `frontend` folder already contains the data that is needed t
 There are several ways to show the actual front end content.
 1. Place the frontend code under the `html` folder in the server.
 For example, in UW Madison CS servers, move/copy the `frontend` folder into your `~/public/html-s/cs765_project`.
-Then you can access the frontend through  `https://pages.cs.wisc.edu/~cs_user_name/cs765_project/frontend`
+Then you can access the frontend through  `https://pages.cs.wisc.edu/~cs_user_name/cs765_project/frontend`,
+where `cs_user_name` is your CS username in UW Madison CS department.
 2. If you would like to run the frontend locally, you can also tools like [`VS Code Live Server Extension`](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) or `python3 -m http.server`
