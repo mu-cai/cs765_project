@@ -1,40 +1,34 @@
 from math import sqrt
-from numpy.core.fromnumeric import size
 import pandas as pd
-from skimage._shared.utils import check_nD
 from sklearn.preprocessing import StandardScaler
 from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-import seaborn as sns
 from skimage.metrics import structural_similarity as compare_ssim
 import numpy as np
-import torch.nn.functional as F
-np.random.seed(0)
-import lpips
-from PIL import Image
-import torch
 import csv, os
-use_cuda = torch.cuda.is_available()
-
+np.random.seed(0)
 
 import argparse
 parser = argparse.ArgumentParser()
-parser.add_argument('--high_score', default='SSIM', type=str, help="")
-parser.add_argument('--low_score', default='TSNE', type=str, help="")
-parser.add_argument('--dataset', default='mnist', type=str, help="")
-parser.add_argument('--sample_per_class', default=10, type=int, help="")
-parser.add_argument('--num_neighbors', default=3, type=int, help="")
-parser.add_argument('--n_components', default=2, type=int, help="")
+parser.add_argument('--high_score', default='SSIM', type=str, help="score for high dimensional similarity, for example, 'SSIM' ")
+parser.add_argument('--low_score', default='TSNE', type=str, help="core for high dimensional similarity, choose from [TSNE, UMAP]")
+parser.add_argument('--dataset', default='mnist', type=str, help="data name: choose from [mnist, cifar]")
+parser.add_argument('--sample_per_class', default=10, type=int, help="choose form 1-100")
+parser.add_argument('--num_neighbors', default=3, type=int, help="choose from 1-10")
+parser.add_argument('--n_components', default=2, type=int, help="choose from 1-10")
+parser.add_argument('--image_save_path', default='./', type=str, help="the path to save images. I save it into public/html-s/cs765")
 args = parser.parse_args()
 
 
-
-dataset= args.dataset # 'mnist' # mnist cifar
-high_score = args.high_score #  'SSIM'
-low_score = args.low_score #  'TSNE' # TSNE UMAP
+dataset= args.dataset
+high_score = args.high_score 
+low_score = args.low_score
 
 if high_score == 'LPIPS':
+    import torch
+    import torch.nn.functional as F
+    import lpips
+    use_cuda = torch.cuda.is_available()
     loss_fn_alex = lpips.LPIPS(net='alex') # best forward scores
     if use_cuda:
         loss_fn_alex = loss_fn_alex.cuda()
@@ -42,11 +36,11 @@ if high_score == 'LPIPS':
 index1 = 1
 index2 = 2
 scale = 255
-sample_per_class = args.sample_per_class # 10 # 200 #  200
+sample_per_class = args.sample_per_class 
 deep_input_size = 32
 num_neighbors = args.num_neighbors # 3
-show_image = False #  True # False
-save_image_to_dir = not show_image # True
+show_image = False 
+save_image_to_dir = not show_image
 search_index = 2
 min_index_num = 2
 source_dir = 'source_data'
@@ -56,7 +50,7 @@ if dataset=='mnist':
 elif dataset=='cifar':
     dataset_name= os.path.join( source_dir,   'source_cifar.csv' )
     channel_num = 3
-train = pd.read_csv(dataset_name) # train
+train = pd.read_csv(dataset_name) 
 train.head()
 # print(train.shape[0])
 label = train["label"]
@@ -69,16 +63,20 @@ base_name = f"{dataset}_{high_score}_{low_score}_sample_{whole_num_sample}_num_n
 csv_folder = 'processed_data/csv'
 filename = os.path.join( csv_folder,  base_name+ ".csv" )
 sim_file_folder = 'processed_data/npy'
-home_dir =  os.environ['HOME']
-print(home_dir)
-save_img_path = os.path.join(home_dir, f'public/html-s/cs765/{base_name}')
+# if you want to save to html servers in cs machine, you can save it into following path
+# home_dir =  os.environ['HOME']
+# args.image_save_path =  os.path.join(home_dir, args.image_save_path)
+# print(home_dir)
+
+# path to save images
+save_img_path = os.path.join(args.image_save_path, base_name)
+
 if not os.path.exists(save_img_path) and not show_image:
     os.mkdir(save_img_path)
-    # os.makedirs(save_img_path, exist_ok=True)
 os.makedirs(sim_file_folder, exist_ok=True)
 
 
-
+# initialize the similarity score array
 save_similarity_score = True
 if save_similarity_score:
     sim_high = np.zeros((whole_num_sample, whole_num_sample))
@@ -87,7 +85,7 @@ if save_similarity_score:
     sim_low_filename =os.path.join( sim_file_folder,  base_name+ f"_{low_score}_similarity.npy" )
 
 
-
+# reshape the images to make the visualization more general
 def reshape_img(train,search_index):
     if channel_num==3:
         img1 =  train.iloc[search_index].values[1:].reshape(channel_num, shape, shape ) 
@@ -97,45 +95,30 @@ def reshape_img(train,search_index):
         img1 =  train.iloc[search_index].values[1:].reshape( shape, shape ) 
     return img1
 
-
+# compute ssim
 def ssim(img_org, img1, scale):
     return compare_ssim(img_org/scale, img1/scale,multichannel=True)
-
-
 def ssim_index(train, index1, index2, shape):
     img1 = reshape_img(train,index1)
     img2 = reshape_img(train,index2)
-    # plt.imshow(img1)
-    # plt.colorbar()
-    # plt.show()
-    # print('ssim', ssim(img2, img1, scale))
     return ssim(img2, img1, scale)
 
+# compute lpips
 def lpips_index(train, index1, index2, shape):
     img1 =  train.iloc[index1].values[1:].reshape(shape, shape)/scale
     img2 =  train.iloc[index2].values[1:].reshape(shape, shape)/scale
-    # img2 = np.expand_dims(train.iloc[index2].values[1:].reshape(shape, shape),axis=0)
-    
-
-    # img1 = Image.fromarray(img2) # , 'RGB'
     img1 =(torch.from_numpy(img1)).unsqueeze(0).unsqueeze(0).repeat(1,3,1,1)
     img2 =(torch.from_numpy(img2)).unsqueeze(0).unsqueeze(0).repeat(1,3,1,1)
 
     img1 = F.interpolate(img1, (deep_input_size, deep_input_size))
     img2 = F.interpolate(img2, (deep_input_size, deep_input_size))
 
-    # print(img1.shape, img2.shape)
-
-    # plt.imshow(img1)
-    # plt.colorbar()
-    # plt.show()
-    # print('ssim', ssim(img2, img1, scale))
     if use_cuda:
         img1 = img1.cuda()
         img2 = img2.cuda()
     return loss_fn_alex(img1.long(), img2.long()).item()
 
-
+# show image
 def return_img(train,search_index, shape, show = False, save = False):
     img1 =  reshape_img(train,search_index)
     if show:
@@ -146,6 +129,7 @@ def return_img(train,search_index, shape, show = False, save = False):
         plt.imsave(os.path.join( save_img_path,  f'{search_index}.jpg'), img1)
     return img1
 
+# get the min distance from a list
 def min_distance(train, index, metric = 'LPIPS', mse_list =None, tsne_res = None):
     if metric == 'LPIPS' or metric == 'SSIM':
         mse_list = []
@@ -174,6 +158,8 @@ def min_distance(train, index, metric = 'LPIPS', mse_list =None, tsne_res = None
         min_dis_value_list.append(value)
     return min_dis_index_list, min_dis_value_list, [x * -1 for x in comp_mse_list ]
 
+
+# visualize the images 
 def show_all_imgs(train_df, min_dis_index_list, shape, show = False):
     if not show:
         return None
@@ -196,30 +182,7 @@ def show_all_imgs(train_df, min_dis_index_list, shape, show = False):
 train = train.sample(n=whole_num_sample,axis='rows', random_state = 0)
 print(train.shape)
 label = train["label"]
-# print(train.isnull().any().sum())
-# print(train.iloc[0])
 
-# print(label.value_counts())
-# print("train[1,:].shape = ", train.iloc[index1].values[1:].reshape(shape, shape, channel_num).shape)
-# img1 =  train.iloc[index1].values[1:].reshape(shape, shape)
-# img2 = train.iloc[index2].values[1:].reshape(shape, shape)
-
-# plt.imshow(img1)
-# plt.colorbar()
-# plt.show()
-
-
-############## LPIPS ##############
-# lpips_value = lpips_index(train, index1, index2, shape)
-# print('lpips_value:', lpips_value)
-# min_distance_tsne = min_distance(train, index=1, metric = 'LPIPS')
-# min_distance_tsne, min_distance_value_tsne = min_distance(train, index=1, metric = 'SSIM')
-# show_all_imgs(train, min_distance_tsne, shape, show = show_image)
-# print("min_distance: ", min_distance_tsne)
-
-############## SSIM ##############
-# ssim_value = ssim_index(train, index1, index2, shape)
-# print('ssim', ssim_value)
 import copy
 train_df = copy.deepcopy(train) 
 print(train.shape)
@@ -236,12 +199,11 @@ elif low_score == 'UMAP':
     tsne_res = reducer.fit_transform(train)
 
 
-
-############## TSNE_general ##############
+############## compute distance/similarity and find neighbors ##############
 
 all_csv_content = []
 for i in range(run_file_num):
-    print('##############',i ,  '##############')
+    print('############## Sample ',i ,  '##############')
     _ = return_img(train_df,i, shape, show = False, save = save_image_to_dir)
     min_distance_index_ssim, min_distance_value_ssim, high_sim_score = min_distance(train_df, index=i, metric = high_score)
     show_all_imgs(train_df, min_distance_index_ssim, shape, show = show_image)
@@ -254,8 +216,6 @@ for i in range(run_file_num):
     sim_low[i,:]  = low_sim_score
     all_csv_content.append(content)
 
-print(sim_high)
-# print(sim_low)
 print('min: ', min(sim_high.reshape(run_file_num*run_file_num)), 'max,', max(sim_high.reshape(run_file_num*run_file_num)) )
 np.save(sim_high_filename, sim_high)
 np.save(sim_low_filename, sim_low)
@@ -265,10 +225,8 @@ fields = ['index', 'high_nei', 'high_sim', 'low_nei', 'low_sim']
 with open(filename, 'w') as csvfile: 
     # creating a csv writer object 
     csvwriter = csv.writer(csvfile) 
-        
     # writing the fields 
     csvwriter.writerow(fields) 
-        
     # writing the data rows 
     csvwriter.writerows(all_csv_content)
 

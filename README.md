@@ -2,6 +2,14 @@
 
 ## Backend Part
 ### Environment and dependencies
-- Python 3.8
-- Pytorch 1.10
-- 
+- python 3.8
+- sklearn
+- skimage
+- numpy
+- pandas
+- csv
+- matplotlib 
+
+if you decide to use LPIPS, then you also need to install:
+- pytorch 1.10
+- lpips
