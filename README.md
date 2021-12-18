@@ -13,3 +13,8 @@
 if you decide to use LPIPS, then you also need to install:
 - pytorch 1.10
 - lpips
+
+
+## Frontend Part
+### Environment and dependencies
+You can directly download our frontend part, and see the frontend layout of our visualization. 
