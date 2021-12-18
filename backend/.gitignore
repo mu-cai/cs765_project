@@ -1,5 +1,5 @@
 figs/
-figs/*
-processed_data/
-source_data/
+# figs/*
+# processed_data/
+# source_data/
 archieve/
