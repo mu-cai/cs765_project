@@ -1,5 +1,7 @@
 # Interactive, Interpretable and User-Friendly Dimensionality Reduction Visualization
-Go to this [website](https://pages.cs.wisc.edu/~mucai/cs765/cs765_project/DR_vis) to see our visualization
+Go to this [website for mnist](https://pages.cs.wisc.edu/~mucai/cs765/cs765_project/DR_vis) 
+and [website for cifar](https://pages.cs.wisc.edu/~mucai/cs765/cs765_project/DR_vis_cifar)
+ to see our visualization
 
 ![model_layout](teaser/layout.png)
 ## Backend Part
