@@ -49,12 +49,12 @@ show_image = False #  True # False
 save_image_to_dir = not show_image # True
 search_index = 2
 min_index_num = 2
-
+source_dir = 'source_data'
 if dataset=='mnist':
-    dataset_name = 'train.csv'
+    dataset_name = os.path.join( source_dir,  'source_mnist.csv' )
     channel_num = 1
 elif dataset=='cifar':
-    dataset_name= 'train_cifar.csv'
+    dataset_name= os.path.join( source_dir,   'source_cifar.csv' )
     channel_num = 3
 train = pd.read_csv(dataset_name) # train
 train.head()
@@ -66,22 +66,25 @@ run_file_num = whole_num_sample if not show_image else 1
 shape = int(sqrt(train.iloc[index1].values[1:].shape[0] /channel_num )  )
 print('Image_width: shape')
 base_name = f"{dataset}_{high_score}_{low_score}_sample_{whole_num_sample}_num_neighbors_{num_neighbors}"
-filename = base_name+ ".csv"
+csv_folder = 'processed_data/csv'
+filename = os.path.join( csv_folder,  base_name+ ".csv" )
+sim_file_folder = 'processed_data/npy'
 home_dir =  os.environ['HOME']
 print(home_dir)
 save_img_path = os.path.join(home_dir, f'public/html-s/cs765/{base_name}')
 if not os.path.exists(save_img_path) and not show_image:
     os.mkdir(save_img_path)
     # os.makedirs(save_img_path, exist_ok=True)
+os.makedirs(sim_file_folder, exist_ok=True)
 
 
 
 save_similarity_score = True
 if save_similarity_score:
     sim_high = np.zeros((whole_num_sample, whole_num_sample))
-    sim_high_filename = base_name+ f"_{high_score}_similarity.npy"
+    sim_high_filename = os.path.join( sim_file_folder, base_name+ f"_{high_score}_similarity.npy" )
     sim_low = np.zeros((whole_num_sample, whole_num_sample))
-    sim_low_filename = base_name+ f"_{low_score}_similarity.npy"
+    sim_low_filename =os.path.join( sim_file_folder,  base_name+ f"_{low_score}_similarity.npy" )
 
 
 
@@ -274,61 +277,3 @@ for i in range(len(data)):
     for j in data.columns[1:]:
         data[j][i] = data[j][i][1:-1]
 data.to_csv(filename)
-
-
-
-# target_embed = tsne_res [search_index]
-
-
-
-# plt.figure(figsize=(16,10))
-# sns.scatterplot(x = tsne_res[:,0], y = tsne_res[:,1], hue = label, palette = sns.hls_palette(10), legend = 'full')
-# plt.plot(tsne_res[search_index,0], tsne_res[search_index,1],  color='r',markerfacecolor='red',marker='o',markersize=12) # , size = 2
-# # plt.show()
-# folder_name = 'figs/'
-# plt.savefig(folder_name+'tsne_vanilia_specific.png',bbox_inches='tight',  pad_inches = 0)
-
-
-
-
-# mse_list = (tsne_res [:, 0] - target_embed [0] ) ** 2  + (tsne_res [:, 1] - target_embed [1] ) ** 2 
-# print("mse_list = ", mse_list)
-
-# def min_distance_general():
-#     index_list 
-#     for i in range(num_neighbors):
-#         min_index = np.argsort(mse_list)[i]
-# for i in range(num_neighbors):
-#     min_index = np.argsort(mse_list)[i]
-#     img = return_img(train_df,min_index, shape, show = False)
-#     if i == 0:
-#         img_whole = img
-#     else:
-#         img_whole = np.concatenate((img_whole, img), axis=1)
-# plt.imshow(img_whole)
-# plt.colorbar()
-# plt.show()
-# plt.savefig('figs/mse_figures_specific.png',bbox_inches='tight',  pad_inches = 0)
-
-
- 
-# min_index = np.argsort(mse_list)[min_index_num]
-# print("min_index:", min_index)
-
-# img = return_img(train_df,min_index, shape, show = False)
-
-# img0 = torch.zeros(1,3,64,64) # image should be RGB, IMPORTANT: normalized to [-1,1]
-# img1 = torch.zeros(1,3,64,64)
-# if use_cuda:
-#     img0 = img0.cuda()
-#     img1 = img1.cuda()
-# d = loss_fn_alex(img0, img1)
-
-
-
-
-
-
-
-
-
